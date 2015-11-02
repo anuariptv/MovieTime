@@ -1,0 +1,70 @@
+<android.support.v7.widget.CardView
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/fragment_photo_gallery_card_view"
+    android:layout_height="200dp"
+    android:layout_width="match_parent"
+    card_view:cardCornerRadius="4dp"
+    android:layout_margin="16dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+                   android:id="@+id/fragment_movie_time_image_view"
+                   android:layout_width="160dp"
+                   android:layout_height="match_parent"
+                   android:scaleType="centerCrop"
+                   android:elevation="2dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/fragment_movie_time_top_what"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="16dp"
+                android:text="@string/top_what"
+                android:textColor="@android:color/holo_blue_dark"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/fragment_movie_time_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="16dp"
+                android:hint="title"/>
+
+            <TextView
+                android:id="@+id/fragment_movie_time_original_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="16dp"
+                android:hint="original_title"/>
+
+            <TextView
+                android:id="@+id/fragment_movie_time_year"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="16dp"
+                android:hint="year"/>
+
+            <TextView
+                android:id="@+id/fragment_movie_time_rating"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="16dp"
+                android:hint="rating"
+                android:textColor="@android:color/holo_blue_light"/>
+        </LinearLayout>
+    </LinearLayout>
+</android.support.v7.widget.CardView>
