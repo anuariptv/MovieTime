@@ -9,4 +9,10 @@
     <string name="top_what">Top %1$s</string>
     <string name="search">Search</string>
     <string name="clear_search">Clear Search</string>
+    <string name="in_theaters">In theaters</string>
+    <string name="coming_soon">Coming soon</string>
+    <string name="top_movies">Top movies</string>
+    <string name="weekly">Weekly</string>
+
+
 </resources>

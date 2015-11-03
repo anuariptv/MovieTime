@@ -13,6 +13,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -28,6 +31,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -51,7 +55,8 @@ import java.util.List;
 /**
  * Created by zuzhi on 15/11/2.
  */
-public class MovieTimeFragment extends Fragment implements NavigationView.OnNavigationItemSelectedListener {
+public class MovieTimeFragment extends Fragment
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "MovieTimeFragment";
 
@@ -72,8 +77,20 @@ public class MovieTimeFragment extends Fragment implements NavigationView.OnNavi
         setRetainInstance(true);
         setHasOptionsMenu(true);
 
+        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+
+        DrawerLayout drawer = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                getActivity(), drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) getActivity().findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
         updateItems();
-//        new DoubanFetchr().execute(); // 豆瓣API使用HttpClient总是返回500， weired :(
+        //new DoubanFetchrTask().execute(); // 豆瓣API使用HttpClient总是返回500， weired :(
 
         Handler responseHandler = new Handler();
         mThumbnailDownloader = new ThumbnailDownloader<>(responseHandler);
@@ -215,23 +232,28 @@ public class MovieTimeFragment extends Fragment implements NavigationView.OnNavi
         // Handle navigation view item clicks here.
         int id = menuItem.getItemId();
 
-        if (id == R.id.nav_camara) {
+        if (id == R.id.nav_in_theaters) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
+            toast("in theaters");
+        } else if (id == R.id.nav_coming_soon) {
+            toast("coming soon");
+        } else if (id == R.id.nav_top_movies) {
+            toast("top movies");
+        } else if (id == R.id.nav_weekly) {
+            toast("weekly");
         } else if (id == R.id.nav_share) {
-
+            toast("share");
         } else if (id == R.id.nav_send) {
-
+            toast("send");
         }
 
         DrawerLayout drawer = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void toast(String string) {
+        Toast.makeText(getActivity(), string, Toast.LENGTH_SHORT).show();
     }
 
     private class PhotoHolder extends RecyclerView.ViewHolder {
