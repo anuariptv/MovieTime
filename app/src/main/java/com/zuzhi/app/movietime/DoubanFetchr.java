@@ -20,6 +20,7 @@ public class DoubanFetchr {
 
     private static final String SEARCH_METHOD = "search";
     private static final String IN_THEATERS_METHOD = "in_theaters";
+    private static final String COMING_SOON_METHOD = "coming_soon";
     private static final String TOP250_METHOD = "top250";
 
     private static final Uri ENDPOINT = Uri.parse("https://api.douban.com/v2/movie/");
@@ -52,13 +53,8 @@ public class DoubanFetchr {
         return new String(getUrlBytes(urlSpec));
     }
 
-    public MovieItems searchMovies(String query) {
-        String url = buildUrl(SEARCH_METHOD, query);
-        return downloadMovieItems(url);
-    }
-
-    public MovieItems in_theaters(String query) {
-        String url = buildUrl(IN_THEATERS_METHOD, query);
+    public MovieItems methodWithQuery(String method, String query) {
+        String url = buildUrl(method, query);
         return downloadMovieItems(url);
     }
 
@@ -78,13 +74,23 @@ public class DoubanFetchr {
     }
 
     private String buildUrl(String method, String query) {
-        Uri.Builder uriBuilder = ENDPOINT.buildUpon()
-                .appendPath(method);
-        if (method.equals(SEARCH_METHOD)) {
-            uriBuilder.appendQueryParameter("q", query);
-        } else {
-            uriBuilder.appendQueryParameter("city", query);
+        Uri.Builder uriBuilder = ENDPOINT.buildUpon().appendPath(method);
+
+        switch (method) {
+            case SEARCH_METHOD:
+                uriBuilder.appendQueryParameter("q", query);
+                break;
+            case IN_THEATERS_METHOD:
+                query = "昆明";
+                uriBuilder.appendQueryParameter("city", query);
+                break;
+            case COMING_SOON_METHOD:
+                break;
+            case TOP250_METHOD:
+                break;
+            default:
         }
+
         return uriBuilder.build().toString();
     }
 

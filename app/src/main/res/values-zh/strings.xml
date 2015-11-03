@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MovieTime</string>
+    <string name="action_settings">设置</string>
+
+    <string name="search">搜索</string>
+    <string name="clear_search">清除搜索项</string>
+
+    <string name="in_theaters">正在热映</string>
+    <string name="coming_soon">即将上映</string>
+    <string name="top_movies">电影榜单</string>
+</resources>

@@ -1,10 +1,12 @@
 package com.zuzhi.app.movietime;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -60,11 +62,17 @@ public class MovieTimeFragment extends Fragment
 
     private static final String TAG = "MovieTimeFragment";
 
+    private static final String SEARCH_METHOD = "search";
+    private static final String IN_THEATERS_METHOD = "in_theaters";
+    private static final String COMING_SOON_METHOD = "coming_soon";
+    private static final String TOP250_METHOD = "top250";
+
     private RecyclerView mPhotoRecyclerView;
     private RecyclerView mRecyclerView;
     private List<MovieItem> mItems = new ArrayList<>();
     private ThumbnailDownloader<PhotoHolder> mThumbnailDownloader;
     private ProgressBar mProgressBar;
+    private TextView mGithubAddress;
 
     public static Fragment newInstance() {
         return new MovieTimeFragment();
@@ -88,6 +96,17 @@ public class MovieTimeFragment extends Fragment
 
         NavigationView navigationView = (NavigationView) getActivity().findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        // null object reference
+        /*mGithubAddress = (TextView) getActivity().findViewById(R.id.github_address);
+        mGithubAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "https://github.com/zuzhi";
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                startActivity(intent);
+            }
+        });*/
 
         updateItems();
         //new DoubanFetchrTask().execute(); // 豆瓣API使用HttpClient总是返回500， weired :(
@@ -217,7 +236,20 @@ public class MovieTimeFragment extends Fragment
             mProgressBar.setVisibility(View.VISIBLE);
         }
 
-        new FetchItemsTask(query).execute();
+        new FetchItemsTask(IN_THEATERS_METHOD, query).execute();
+    }
+
+    private void updateItemsWithMethod(String method) {
+        String query = QueryPreferences.getStoredQuery(getActivity());
+
+        if (mPhotoRecyclerView != null) {
+            mItems.clear();
+            mPhotoRecyclerView.getAdapter().notifyDataSetChanged();
+            getActivity().setTitle("加载中...");
+            mProgressBar.setVisibility(View.VISIBLE);
+        }
+
+        new FetchItemsTask(method, query).execute();
     }
 
     private void setupAdapter() {
@@ -231,29 +263,30 @@ public class MovieTimeFragment extends Fragment
     public boolean onNavigationItemSelected(MenuItem menuItem) {
         // Handle navigation view item clicks here.
         int id = menuItem.getItemId();
+        String query = QueryPreferences.getStoredQuery(getActivity());
 
-        if (id == R.id.nav_in_theaters) {
-            // Handle the camera action
-            toast("in theaters");
-        } else if (id == R.id.nav_coming_soon) {
-            toast("coming soon");
-        } else if (id == R.id.nav_top_movies) {
-            toast("top movies");
-        } else if (id == R.id.nav_weekly) {
-            toast("weekly");
-        } else if (id == R.id.nav_share) {
-            toast("share");
-        } else if (id == R.id.nav_send) {
-            toast("send");
+        switch (id) {
+            case R.id.nav_in_theaters:
+                updateItemsWithMethod(IN_THEATERS_METHOD);
+                break;
+            case R.id.nav_coming_soon:
+                updateItemsWithMethod(COMING_SOON_METHOD);
+                break;
+            case R.id.nav_top_movies:
+                updateItemsWithMethod(TOP250_METHOD);
+                break;
+            case R.id.nav_share:
+                break;
+            case R.id.nav_send:
+                break;
+
+            default:
+                updateItemsWithMethod(SEARCH_METHOD);
         }
 
         DrawerLayout drawer = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    private void toast(String string) {
-        Toast.makeText(getActivity(), string, Toast.LENGTH_SHORT).show();
     }
 
     private class PhotoHolder extends RecyclerView.ViewHolder {
@@ -331,23 +364,25 @@ public class MovieTimeFragment extends Fragment
 
     private class FetchItemsTask extends AsyncTask<Void, Void, MovieItems> {
         private String mQuery;
+        private String mMethod;
 
         public FetchItemsTask(String query) {
+            mQuery = query;
+        }
+
+        public FetchItemsTask(String method, String query) {
+            mMethod = method;
             mQuery = query;
         }
         @Override
         protected MovieItems doInBackground(Void... params) {
 
-            /*String query = "克里斯托弗诺兰"; // Just for testing
-            query = null;
-            query = "昆明";*/
-
-            if (mQuery == null) {
-                mQuery = "昆明";
-                return new DoubanFetchr().in_theaters(mQuery);
-            } else {
-                return new DoubanFetchr().searchMovies(mQuery);
-            }
+//            if (mQuery == null) {
+//                mQuery = "昆明";
+                return new DoubanFetchr().methodWithQuery(mMethod, mQuery);
+//            } else {
+//                return new DoubanFetchr().searchMovies(mQuery);
+//            }
         }
 
         @Override
