@@ -15,7 +15,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,7 +32,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -97,18 +95,7 @@ public class MovieTimeFragment extends Fragment
         NavigationView navigationView = (NavigationView) getActivity().findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // null object reference
-        /*mGithubAddress = (TextView) getActivity().findViewById(R.id.github_address);
-        mGithubAddress.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String url = "https://github.com/zuzhi";
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                startActivity(intent);
-            }
-        });*/
-
-        updateItems();
+        updateItemsWithMethod(IN_THEATERS_METHOD);
         //new DoubanFetchrTask().execute(); // 豆瓣API使用HttpClient总是返回500， weired :(
 
         Handler responseHandler = new Handler();
@@ -131,6 +118,7 @@ public class MovieTimeFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_movie_time, container, false);
+        View newView = inflater.inflate(R.layout.nav_header_movie_time, container, false);
 
         mPhotoRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_movie_time_recycler_view);
         mPhotoRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
@@ -153,6 +141,17 @@ public class MovieTimeFragment extends Fragment
         mProgressBar.setIndeterminate(true);
         mProgressBar.getIndeterminateDrawable().setColorFilter(ContextCompat.getColor(getActivity(), R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
         mProgressBar.setVisibility(View.VISIBLE);
+
+        // null object reference
+        mGithubAddress = (TextView) newView.findViewById(R.id.github_address);
+        mGithubAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "https://github.com/zuzhi";
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                startActivity(intent);
+            }
+        });
 
         setupAdapter();
 
@@ -219,7 +218,7 @@ public class MovieTimeFragment extends Fragment
         switch (item.getItemId()) {
             case R.id.menu_item_clear:
                 QueryPreferences.setStoredQuery(getActivity(), null);
-                updateItems();
+                updateItemsWithMethod(IN_THEATERS_METHOD);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -236,7 +235,8 @@ public class MovieTimeFragment extends Fragment
             mProgressBar.setVisibility(View.VISIBLE);
         }
 
-        new FetchItemsTask(IN_THEATERS_METHOD, query).execute();
+//        new FetchItemsTask(IN_THEATERS_METHOD, query).execute();
+        new FetchItemsTask(SEARCH_METHOD, query).execute();
     }
 
     private void updateItemsWithMethod(String method) {
@@ -263,7 +263,6 @@ public class MovieTimeFragment extends Fragment
     public boolean onNavigationItemSelected(MenuItem menuItem) {
         // Handle navigation view item clicks here.
         int id = menuItem.getItemId();
-        String query = QueryPreferences.getStoredQuery(getActivity());
 
         switch (id) {
             case R.id.nav_in_theaters:
@@ -281,7 +280,7 @@ public class MovieTimeFragment extends Fragment
                 break;
 
             default:
-                updateItemsWithMethod(SEARCH_METHOD);
+                updateItems();
         }
 
         DrawerLayout drawer = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
